@@ -9,6 +9,7 @@ import { sdkGoGuides } from './sdk-go.js';
 import { channelGuides } from './channels.js';
 import { partnerGuides } from './partners.js';
 import { legalGuides } from './legal.js';
+import { miniAppGuides } from '../mini-apps/index.js';
 
 export {
   platformGuides,
@@ -21,6 +22,7 @@ export {
   channelGuides,
   partnerGuides,
   legalGuides,
+  miniAppGuides,
 };
 
 export const allGuides: GuideDoc[] = [
@@ -44,4 +46,5 @@ export const guidesByCategory: Record<string, GuideDoc[]> = {
   channels: channelGuides,
   partners: partnerGuides,
   legal: legalGuides,
+  'mini-apps': miniAppGuides,
 };

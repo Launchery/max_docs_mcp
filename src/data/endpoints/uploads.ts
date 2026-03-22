@@ -6,33 +6,31 @@ export const uploadsEndpoints: EndpointDoc[] = [
     path: '/uploads',
     group: 'uploads',
     summary: 'Загрузить файл',
-    description: 'Загружает файл на сервер MAX. Поддерживает multipart и resumable загрузку. Максимальный размер: 4 ГБ. Возвращает URL и токен, которые можно использовать в сообщениях.',
+    description: 'Инициализирует загрузку файла и возвращает URL для последующей передачи контента. Поддерживаются multipart upload и resumable upload. Для некоторых типов медиа поле `token` может присутствовать уже на этом шаге.',
     parameters: [
       { name: 'type', location: 'query', type: 'string', required: true, description: 'Тип загружаемого файла', enumValues: ['image', 'video', 'audio', 'file'] },
     ],
-    requestBody: {
-      description: 'Файл в формате multipart/form-data',
-      fields: [
-        { name: 'data', type: 'binary', required: true, nullable: false, description: 'Содержимое файла' },
-      ],
-    },
     response: {
-      description: 'Результат загрузки',
+      description: 'Данные для следующего шага загрузки',
       fields: [
-        { name: 'url', type: 'string', required: true, nullable: false, description: 'URL загруженного файла' },
-        { name: 'token', type: 'string', required: true, nullable: false, description: 'Токен для использования файла в сообщениях' },
+        { name: 'url', type: 'string', required: true, nullable: false, description: 'URL, по которому нужно загрузить файл' },
+        { name: 'token', type: 'string', required: false, nullable: true, description: 'Токен вложения, если он уже возвращён на этапе инициализации загрузки' },
       ],
     },
     example: {
-      curl: 'curl -X POST -H "Authorization: {access_token}" -F "data=@photo.jpg" "https://platform-api.max.ru/uploads?type=image"',
+      curl: 'curl -X POST -H "Authorization: {access_token}" "https://platform-api.max.ru/uploads?type=file"',
     },
     notes: [
-      'Максимальный размер файла: 4 ГБ',
+      'Максимальный размер файла: 4 ГБ.',
+      'Значение `type=photo` больше не поддерживается, используйте `type=image`.',
+      'Multipart upload использует `Content-Type: multipart/form-data`: можно загрузить только один файл, а прерванную загрузку нельзя продолжить.',
+      'Resumable upload используется, если `Content-Type` не равен `multipart/form-data`, и позволяет загружать файл по частям.',
+      'После успешной загрузки видео, аудио, изображения или файла нужно использовать полученный `token` или payload при отправке через `POST /messages`.',
+      'Сразу после загрузки файл может быть ещё не готов к отправке: API может вернуть ошибку `attachment.not.ready`.',
       'Поддерживаемые форматы image: JPG, PNG, GIF, TIFF, BMP, HEIC',
       'Поддерживаемые форматы video: MP4, MOV, MKV, WEBM, MATROSKA',
       'Поддерживаемые форматы audio: MP3, WAV, M4A',
       'Тип file: любой формат',
-      'Поддерживает multipart и resumable загрузку',
     ],
   },
 ];

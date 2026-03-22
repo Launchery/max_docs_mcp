@@ -1,730 +1,645 @@
-import type { UILibraryDoc } from '../types.js';
+import type {
+  ComponentDoc,
+  ComponentProp,
+  UILibraryDoc,
+} from '../types.js';
+
+const prop = (
+  name: string,
+  type: string,
+  required: boolean,
+  description: string,
+  defaultValue?: string,
+): ComponentProp => ({
+  name,
+  type,
+  required,
+  description,
+  defaultValue,
+});
+
+const component = (
+  name: string,
+  category: string,
+  description: string,
+  props: ComponentProp[],
+  notes?: string[],
+): ComponentDoc => ({
+  name,
+  category,
+  description,
+  props,
+  notes,
+});
 
 export const uiLibrary: UILibraryDoc = {
   overview:
-    'MAX UI — библиотека React-компонентов для создания интерфейсов мини-приложений на платформе MAX. Поддерживает React 18+, TypeScript, адаптацию под платформу (iOS/Android) и тёмную/светлую темы.',
-  installInstructions: 'npm install @max-ui/components',
+    'MAX UI — React-библиотека компонентов для мини-приложений MAX. Актуальный npm-пакет: `@maxhub/max-ui`. Быстрый старт на текущем пакете: импортировать `@maxhub/max-ui/dist/styles.css` и обернуть приложение в провайдер `MaxUI`. Ниже перечислены ключевые typed props; базовые DOM props (`children`, `onClick`, `value`, `src` и т.д.) наследуются от underlying React-элементов.',
+  installInstructions:
+    'npm install @maxhub/max-ui\nimport \'@maxhub/max-ui/dist/styles.css\';\nimport { MaxUI } from \'@maxhub/max-ui\';',
   themeDescription:
-    'Поддержка светлой и тёмной тем. Автоматическое переключение на основе системных настроек или ручная установка.',
+    'Провайдер `MaxUI` принимает значения контекста `platform` (`ios` | `android`) и `colorScheme` (`light` | `dark`). Компоненты ориентируются на этот контекст для адаптации внешнего вида.',
   platformAdaptation:
-    'Компоненты автоматически адаптируются под iOS и Android, используя нативные паттерны взаимодействия каждой платформы.',
+    'Пакет типизирует платформу как `ios` или `android`, а цветовую схему как `light` или `dark`. Документация MAX UI дополняет это Storybook-примерами и площадкой Playground для каждого компонента.',
   components: [
-    // ========== Avatar ==========
-    {
-      name: 'Avatar.Container',
-      category: 'avatar',
-      description: 'Основной контейнер аватара',
-      props: [
-        {
-          name: 'size',
-          type: 'string',
-          required: false,
-          defaultValue: '48',
-          description: 'Размер аватара в пикселях',
-        },
-        {
-          name: 'shape',
-          type: "'circle' | 'square'",
-          required: false,
-          description: 'Форма аватара: круглая или квадратная',
-        },
+    component(
+      'Avatar.Container',
+      'avatar',
+      'Контейнер аватара с поддержкой размеров, формы и угловых слотов.',
+      [
+        prop('size', 'number', false, 'Размер контейнера аватара'),
+        prop(
+          'overlay',
+          'ReactNode',
+          false,
+          'Оверлей, который рендерится поверх аватара',
+        ),
+        prop(
+          'form',
+          '"circle" | "squircle"',
+          false,
+          'Форма аватара',
+        ),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"overlay" | "content" | "rightBottomCorner" | "rightTopCorner">',
+          false,
+          'Классы для внутренних частей контейнера',
+        ),
+        prop(
+          'rightTopCorner',
+          'ReactNode',
+          false,
+          'Слот в правом верхнем углу',
+        ),
+        prop(
+          'rightBottomCorner',
+          'ReactNode',
+          false,
+          'Слот в правом нижнем углу',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Radix Slot'),
       ],
-    },
-    {
-      name: 'Avatar.Image',
-      category: 'avatar',
-      description: 'Изображение аватара',
-      props: [
-        {
-          name: 'src',
-          type: 'string',
-          required: true,
-          description: 'URL изображения',
-        },
-        {
-          name: 'alt',
-          type: 'string',
-          required: false,
-          description: 'Альтернативный текст изображения',
-        },
+    ),
+    component(
+      'Avatar.Image',
+      'avatar',
+      'Изображение аватара с fallback-элементом и fallback-градиентом.',
+      [
+        prop('fallback', 'ReactNode', false, 'Фолбэк-содержимое вместо изображения'),
+        prop(
+          'fallbackGradient',
+          '"red" | "orange" | "green" | "blue" | "purple" | "custom"',
+          false,
+          'Градиент для fallback-состояния',
+        ),
       ],
-    },
-    {
-      name: 'Avatar.Text',
-      category: 'avatar',
-      description: 'Текстовый фоллбэк аватара',
-      props: [
-        {
-          name: 'text',
-          type: 'string',
-          required: true,
-          description: 'Текст для отображения вместо изображения',
-        },
+      ['Нативные props изображения, такие как `src` и `alt`, наследуются от `<img>`.'],
+    ),
+    component(
+      'Avatar.Text',
+      'avatar',
+      'Текстовый фолбэк аватара.',
+      [
+        prop(
+          'gradient',
+          '"red" | "orange" | "green" | "blue" | "purple" | "custom"',
+          false,
+          'Градиент текстового фолбэка',
+        ),
       ],
-    },
-    {
-      name: 'Avatar.Icon',
-      category: 'avatar',
-      description: 'Иконка-фоллбэк аватара',
-      props: [
-        {
-          name: 'icon',
-          type: 'ReactNode',
-          required: true,
-          description: 'Иконка для отображения вместо изображения',
-        },
-      ],
-    },
-    {
-      name: 'Avatar.OnlineDot',
-      category: 'avatar',
-      description: 'Индикатор онлайн-статуса',
-      props: [
-        {
-          name: 'online',
-          type: 'boolean',
-          required: true,
-          description: 'Статус онлайн',
-        },
-      ],
-    },
-    {
-      name: 'Avatar.Overlay',
-      category: 'avatar',
-      description: 'Оверлей поверх аватара',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое оверлея',
-        },
-      ],
-    },
-    {
-      name: 'Avatar.CloseButton',
-      category: 'avatar',
-      description: 'Кнопка закрытия на аватаре',
-      props: [
-        {
-          name: 'onClick',
-          type: 'function',
-          required: true,
-          description: 'Обработчик нажатия кнопки закрытия',
-        },
-      ],
-    },
+      ['Текст передаётся как обычный `children`.'],
+    ),
+    component(
+      'Avatar.Icon',
+      'avatar',
+      'Иконка внутри аватара.',
+      [],
+      ['Специальных typed props поверх обычного `<span>` у компонента нет.'],
+    ),
+    component(
+      'Avatar.OnlineDot',
+      'avatar',
+      'Индикатор онлайн-статуса для аватара.',
+      [],
+      ['Специальных typed props поверх обычного `<span>` у компонента нет.'],
+    ),
+    component(
+      'Avatar.Overlay',
+      'avatar',
+      'Оверлей для отображения дополнительного состояния поверх аватара.',
+      [],
+      ['Специальных typed props поверх обычного `<span>` у компонента нет.'],
+    ),
+    component(
+      'Avatar.CloseButton',
+      'avatar',
+      'Кнопка закрытия, встроенная в аватар.',
+      [],
+      ['Наследует стандартные button props.'],
+    ),
 
-    // ========== Buttons ==========
-    {
-      name: 'Button',
-      category: 'buttons',
-      description: 'Основная кнопка',
-      props: [
-        {
-          name: 'variant',
-          type: "'primary' | 'secondary' | 'ghost'",
-          required: false,
-          description: 'Вариант отображения кнопки',
-        },
-        {
-          name: 'size',
-          type: "'s' | 'm' | 'l'",
-          required: false,
-          description: 'Размер кнопки',
-        },
-        {
-          name: 'disabled',
-          type: 'boolean',
-          required: false,
-          description: 'Отключена ли кнопка',
-        },
-        {
-          name: 'loading',
-          type: 'boolean',
-          required: false,
-          description: 'Состояние загрузки',
-        },
-        {
-          name: 'onClick',
-          type: 'function',
-          required: false,
-          description: 'Обработчик нажатия',
-        },
+    component(
+      'Button',
+      'buttons',
+      'Основная кнопка MAX UI.',
+      [
+        prop(
+          'size',
+          '"small" | "medium" | "large"',
+          false,
+          'Размер кнопки',
+        ),
+        prop(
+          'mode',
+          '"primary" | "secondary" | "tertiary" | "link"',
+          false,
+          'Режим кнопки',
+        ),
+        prop(
+          'appearance',
+          '"themed" | "negative" | "neutral" | "neutral-themed" | "contrast-static"',
+          false,
+          'Цветовое оформление',
+        ),
+        prop('stretched', 'boolean', false, 'Растягивает кнопку на доступную ширину'),
+        prop('iconBefore', 'ReactNode', false, 'Контент перед текстом'),
+        prop('iconAfter', 'ReactNode', false, 'Контент после текста'),
+        prop('indicator', 'ReactNode', false, 'Дополнительный индикатор'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<ButtonInnerElementKey>',
+          false,
+          'Классы для внутренних частей кнопки',
+        ),
+        prop('loading', 'boolean', false, 'Состояние загрузки'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'IconButton',
-      category: 'buttons',
-      description: 'Кнопка-иконка',
-      props: [
-        {
-          name: 'icon',
-          type: 'ReactNode',
-          required: true,
-          description: 'Иконка кнопки',
-        },
-        {
-          name: 'size',
-          type: "'s' | 'm' | 'l'",
-          required: false,
-          description: 'Размер кнопки',
-        },
-        {
-          name: 'variant',
-          type: 'string',
-          required: false,
-          description: 'Вариант отображения',
-        },
+    ),
+    component(
+      'IconButton',
+      'buttons',
+      'Кнопка-иконка с теми же режимами и appearance, что и обычная Button.',
+      [
+        prop(
+          'size',
+          '"small" | "medium" | "large"',
+          false,
+          'Размер кнопки',
+        ),
+        prop(
+          'mode',
+          '"primary" | "secondary" | "tertiary" | "link"',
+          false,
+          'Режим кнопки',
+        ),
+        prop(
+          'appearance',
+          '"themed" | "negative" | "neutral" | "neutral-themed" | "contrast-static"',
+          false,
+          'Цветовое оформление',
+        ),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"content" | "spinnerContainer" | "spinner">',
+          false,
+          'Классы для внутренних частей кнопки',
+        ),
+        prop('loading', 'boolean', false, 'Состояние загрузки'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'ToolButton',
-      category: 'buttons',
-      description: 'Кнопка инструмента',
-      props: [
-        {
-          name: 'icon',
-          type: 'ReactNode',
-          required: true,
-          description: 'Иконка инструмента',
-        },
-        {
-          name: 'label',
-          type: 'string',
-          required: false,
-          description: 'Подпись кнопки',
-        },
+    ),
+    component(
+      'ToolButton',
+      'buttons',
+      'Кнопка-инструмент с иконкой и лёгким appearance.',
+      [
+        prop('icon', 'ReactNode', false, 'Иконка кнопки'),
+        prop(
+          'appearance',
+          '"default" | "secondary"',
+          false,
+          'Оформление кнопки',
+        ),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"label" | "icon">',
+          false,
+          'Классы для label и icon-частей',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'CellAction',
-      category: 'buttons',
-      description: 'Кнопка действия в ячейке',
-      props: [
-        {
-          name: 'icon',
-          type: 'ReactNode',
-          required: false,
-          description: 'Иконка действия',
-        },
-        {
-          name: 'label',
-          type: 'string',
-          required: true,
-          description: 'Текст действия',
-        },
-        {
-          name: 'destructive',
-          type: 'boolean',
-          required: false,
-          description: 'Деструктивное действие (красный стиль)',
-        },
+    ),
+    component(
+      'CellAction',
+      'buttons',
+      'Кнопка действия в формате ячейки.',
+      [
+        prop(
+          'mode',
+          '"primary" | "destructive" | "custom"',
+          false,
+          'Режим действия',
+        ),
+        prop(
+          'height',
+          '"compact" | "normal"',
+          false,
+          'Высота ячейки',
+        ),
+        prop('before', 'ReactNode', false, 'Контент перед основным содержимым'),
+        prop('showChevron', 'boolean', false, 'Показывает шеврон справа'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"before" | "chevron" | "content">',
+          false,
+          'Классы для внутренних частей ячейки',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
+    ),
 
-    // ========== Inputs ==========
-    {
-      name: 'Input',
-      category: 'inputs',
-      description: 'Текстовое поле ввода',
-      props: [
-        {
-          name: 'value',
-          type: 'string',
-          required: true,
-          description: 'Текущее значение поля',
-        },
-        {
-          name: 'onChange',
-          type: 'function',
-          required: true,
-          description: 'Обработчик изменения значения',
-        },
-        {
-          name: 'placeholder',
-          type: 'string',
-          required: false,
-          description: 'Текст-заполнитель',
-        },
-        {
-          name: 'disabled',
-          type: 'boolean',
-          required: false,
-          description: 'Отключено ли поле',
-        },
-        {
-          name: 'error',
-          type: 'string',
-          required: false,
-          description: 'Текст ошибки валидации',
-        },
+    component(
+      'Input',
+      'inputs',
+      'Базовое текстовое поле ввода.',
+      [
+        prop('mode', '"primary" | "secondary"', false, 'Визуальный режим поля'),
+        prop('compact', 'boolean', false, 'Компактная версия поля'),
+        prop('iconBefore', 'ReactNode', false, 'Контент перед полем'),
+        prop('iconAfter', 'ReactNode', false, 'Контент после поля'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"input" | "clearButton" | "body" | "iconBefore" | "iconAfter">',
+          false,
+          'Классы для внутренних частей поля',
+        ),
+        prop(
+          'withClearButton',
+          'boolean',
+          false,
+          'Показывает кнопку очистки',
+        ),
       ],
-    },
-    {
-      name: 'Textarea',
-      category: 'inputs',
-      description: 'Многострочное поле ввода',
-      props: [
-        {
-          name: 'value',
-          type: 'string',
-          required: true,
-          description: 'Текущее значение поля',
-        },
-        {
-          name: 'onChange',
-          type: 'function',
-          required: true,
-          description: 'Обработчик изменения значения',
-        },
-        {
-          name: 'maxLength',
-          type: 'number',
-          required: false,
-          description: 'Максимальная длина текста',
-        },
+    ),
+    component(
+      'Textarea',
+      'inputs',
+      'Многострочное поле ввода.',
+      [
+        prop('mode', '"primary" | "secondary"', false, 'Визуальный режим textarea'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"textarea">',
+          false,
+          'Классы для внутренних частей textarea',
+        ),
       ],
-    },
-    {
-      name: 'SearchInput',
-      category: 'inputs',
-      description: 'Поле поиска',
-      props: [
-        {
-          name: 'value',
-          type: 'string',
-          required: true,
-          description: 'Текущее значение поиска',
-        },
-        {
-          name: 'onChange',
-          type: 'function',
-          required: true,
-          description: 'Обработчик изменения значения',
-        },
-        {
-          name: 'placeholder',
-          type: 'string',
-          required: false,
-          description: 'Текст-заполнитель',
-        },
+    ),
+    component(
+      'SearchInput',
+      'inputs',
+      'Поле поиска со встроенной кнопкой очистки.',
+      [
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"input" | "clearButton" | "body">',
+          false,
+          'Классы для внутренних частей поля поиска',
+        ),
       ],
-    },
-    {
-      name: 'Switch',
-      category: 'inputs',
-      description: 'Переключатель',
-      props: [
-        {
-          name: 'checked',
-          type: 'boolean',
-          required: true,
-          description: 'Состояние переключателя',
-        },
-        {
-          name: 'onChange',
-          type: 'function',
-          required: true,
-          description: 'Обработчик изменения состояния',
-        },
-        {
-          name: 'disabled',
-          type: 'boolean',
-          required: false,
-          description: 'Отключён ли переключатель',
-        },
-      ],
-    },
+    ),
+    component(
+      'Switch',
+      'inputs',
+      'Переключатель.',
+      [],
+      ['Специальных typed props поверх стандартного `<input>` у компонента нет.'],
+    ),
 
-    // ========== Data Display ==========
-    {
-      name: 'CellHeader',
-      category: 'data-display',
-      description: 'Заголовок ячейки',
-      props: [
-        {
-          name: 'title',
-          type: 'string',
-          required: true,
-          description: 'Текст заголовка',
-        },
+    component(
+      'CellHeader',
+      'data-display',
+      'Заголовок группы ячеек.',
+      [
+        prop(
+          'titleStyle',
+          '"caps" | "normal"',
+          false,
+          'Стиль заголовка',
+        ),
+        prop('fullWidth', 'boolean', false, 'Растягивает заголовок на всю ширину'),
+        prop('after', 'ReactNode', false, 'Контент после заголовка'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"content" | "after">',
+          false,
+          'Классы для внутренних частей',
+        ),
       ],
-    },
-    {
-      name: 'CellInput',
-      category: 'data-display',
-      description: 'Ячейка с вводом',
-      props: [
-        {
-          name: 'label',
-          type: 'string',
-          required: true,
-          description: 'Метка ячейки',
-        },
-        {
-          name: 'value',
-          type: 'string',
-          required: true,
-          description: 'Значение ячейки',
-        },
+    ),
+    component(
+      'CellInput',
+      'data-display',
+      'Поле ввода в формате ячейки.',
+      [
+        prop(
+          'height',
+          '"compact" | "normal"',
+          false,
+          'Высота ячейки',
+        ),
+        prop('before', 'ReactNode', false, 'Контент перед input'),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"before" | "input" | "clearButton" | "body">',
+          false,
+          'Классы для внутренних частей',
+        ),
       ],
-    },
-    {
-      name: 'CellList',
-      category: 'data-display',
-      description: 'Список ячеек',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Дочерние элементы (ячейки)',
-        },
+    ),
+    component(
+      'CellList',
+      'data-display',
+      'Контейнер для списка ячеек.',
+      [
+        prop(
+          'mode',
+          '"full-width" | "island"',
+          false,
+          'Режим списка ячеек',
+        ),
+        prop('filled', 'boolean', false, 'Заполненный вариант списка'),
+        prop('header', 'ReactNode', false, 'Заголовок списка'),
       ],
-    },
-    {
-      name: 'CellSimple',
-      category: 'data-display',
-      description: 'Простая ячейка',
-      props: [
-        {
-          name: 'title',
-          type: 'string',
-          required: true,
-          description: 'Заголовок ячейки',
-        },
-        {
-          name: 'subtitle',
-          type: 'string',
-          required: false,
-          description: 'Подзаголовок ячейки',
-        },
-        {
-          name: 'before',
-          type: 'ReactNode',
-          required: false,
-          description: 'Элемент перед содержимым',
-        },
-        {
-          name: 'after',
-          type: 'ReactNode',
-          required: false,
-          description: 'Элемент после содержимого',
-        },
+    ),
+    component(
+      'CellSimple',
+      'data-display',
+      'Универсальная ячейка с title/subtitle/overline и слотами по краям.',
+      [
+        prop(
+          'height',
+          '"compact" | "normal"',
+          false,
+          'Высота ячейки',
+        ),
+        prop(
+          'innerClassNames',
+          'InnerClassNamesProp<"before" | "after" | "chevron" | "content" | "title" | "subtitle" | "overline">',
+          false,
+          'Классы для внутренних частей',
+        ),
+        prop('title', 'ReactNode', false, 'Основной заголовок'),
+        prop('subtitle', 'ReactNode', false, 'Подзаголовок'),
+        prop('overline', 'ReactNode', false, 'Верхняя подпись'),
+        prop('before', 'ReactNode', false, 'Контент слева'),
+        prop('after', 'ReactNode', false, 'Контент справа'),
+        prop('showChevron', 'boolean', false, 'Показывает шеврон'),
+        prop('as', 'ElementType', false, 'Кастомный underlying элемент'),
+        prop('disabled', 'boolean', false, 'Отключённое состояние'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Counter',
-      category: 'data-display',
-      description: 'Счётчик',
-      props: [
-        {
-          name: 'count',
-          type: 'number',
-          required: true,
-          description: 'Значение счётчика',
-        },
-        {
-          name: 'maxCount',
-          type: 'number',
-          required: false,
-          description: 'Максимальное отображаемое значение',
-        },
+    ),
+    component(
+      'Counter',
+      'data-display',
+      'Счётчик/бейдж со значением.',
+      [
+        prop('value', 'number', true, 'Числовое значение счётчика'),
+        prop('rounded', 'boolean', false, 'Скруглённый вариант'),
+        prop(
+          'appearance',
+          '"themed" | "neutral" | "neutral-themed" | "neutral-static" | "negative"',
+          false,
+          'Цветовое оформление',
+        ),
+        prop('disabled', 'boolean', false, 'Отключённое состояние'),
+        prop('muted', 'boolean', false, 'Приглушённый вариант'),
+        prop(
+          'mode',
+          '"filled" | "inverse"',
+          false,
+          'Режим счётчика',
+        ),
       ],
-    },
-    {
-      name: 'Dot',
-      category: 'data-display',
-      description: 'Точка-индикатор',
-      props: [
-        {
-          name: 'color',
-          type: 'string',
-          required: false,
-          description: 'Цвет точки',
-        },
+    ),
+    component(
+      'Dot',
+      'data-display',
+      'Точка-индикатор.',
+      [
+        prop(
+          'appearance',
+          '"themed" | "contrast-pinned" | "neutral-fade" | "accent-red" | "inherit"',
+          false,
+          'Вариант индикатора',
+        ),
       ],
-    },
-    {
-      name: 'Spinner',
-      category: 'data-display',
-      description: 'Индикатор загрузки',
-      props: [
-        {
-          name: 'size',
-          type: "'s' | 'm' | 'l'",
-          required: false,
-          description: 'Размер индикатора',
-        },
+    ),
+    component(
+      'Spinner',
+      'data-display',
+      'Индикатор загрузки.',
+      [
+        prop('size', '20 | 24 | number', false, 'Размер спиннера'),
+        prop(
+          'appearance',
+          '"primary" | "themed" | "neutral-themed" | "primary-static" | "contrast" | "contrast-static" | "negative"',
+          false,
+          'Вариант окраски',
+        ),
       ],
-    },
+    ),
 
-    // ========== Layout ==========
-    {
-      name: 'Container',
-      category: 'layout',
-      description: 'Контейнер',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое контейнера',
-        },
-        {
-          name: 'padding',
-          type: 'string',
-          required: false,
-          description: 'Внутренние отступы',
-        },
+    component(
+      'Container',
+      'layout',
+      'Базовый контейнер с опцией растяжения на всю ширину.',
+      [
+        prop('fullWidth', 'boolean', false, 'Растягивает контейнер на всю ширину'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Flex',
-      category: 'layout',
-      description: 'Флекс-контейнер',
-      props: [
-        {
-          name: 'direction',
-          type: "'row' | 'column'",
-          required: false,
-          description: 'Направление оси',
-        },
-        {
-          name: 'gap',
-          type: 'string',
-          required: false,
-          description: 'Отступ между элементами',
-        },
-        {
-          name: 'align',
-          type: 'string',
-          required: false,
-          description: 'Выравнивание по поперечной оси',
-        },
-        {
-          name: 'justify',
-          type: 'string',
-          required: false,
-          description: 'Выравнивание по главной оси',
-        },
+    ),
+    component(
+      'Flex',
+      'layout',
+      'Флекс-контейнер.',
+      [
+        prop('display', '"flex" | "inline-flex"', false, 'Тип flex-отображения'),
+        prop(
+          'direction',
+          '"row" | "column" | "row-reverse" | "column-reverse"',
+          false,
+          'Направление оси',
+        ),
+        prop(
+          'align',
+          '"flex-start" | "flex-end" | "center" | "baseline" | "stretch"',
+          false,
+          'Выравнивание по поперечной оси',
+        ),
+        prop(
+          'justify',
+          '"start" | "center" | "end" | "space-between"',
+          false,
+          'Выравнивание по главной оси',
+        ),
+        prop(
+          'wrap',
+          '"wrap" | "nowrap" | "wrap-reverse"',
+          false,
+          'Перенос элементов',
+        ),
+        prop('gap', 'number | string', false, 'Общий gap'),
+        prop('gapX', 'number | string', false, 'Горизонтальный gap'),
+        prop('gapY', 'number | string', false, 'Вертикальный gap'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Grid',
-      category: 'layout',
-      description: 'Грид-контейнер',
-      props: [
-        {
-          name: 'columns',
-          type: 'number',
-          required: false,
-          description: 'Количество колонок',
-        },
-        {
-          name: 'gap',
-          type: 'string',
-          required: false,
-          description: 'Отступ между элементами',
-        },
+    ),
+    component(
+      'Grid',
+      'layout',
+      'Grid-контейнер.',
+      [
+        prop('display', '"grid" | "inline-grid"', false, 'Тип grid-отображения'),
+        prop(
+          'align',
+          '"start" | "center" | "end" | "baseline" | "stretch"',
+          false,
+          'Выравнивание по вертикали',
+        ),
+        prop(
+          'justify',
+          '"start" | "center" | "end" | "space-between"',
+          false,
+          'Выравнивание по горизонтали',
+        ),
+        prop('gap', 'number | string', false, 'Общий gap'),
+        prop('gapX', 'number | string', false, 'Горизонтальный gap'),
+        prop('gapY', 'number | string', false, 'Вертикальный gap'),
+        prop('cols', 'number', false, 'Количество колонок'),
+        prop('rows', 'number', false, 'Количество рядов'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Panel',
-      category: 'layout',
-      description: 'Панель',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое панели',
-        },
-        {
-          name: 'header',
-          type: 'ReactNode',
-          required: false,
-          description: 'Заголовок панели',
-        },
+    ),
+    component(
+      'Panel',
+      'layout',
+      'Базовая панель для центрирования и укладки содержимого.',
+      [
+        prop('mode', '"primary" | "secondary"', false, 'Режим панели'),
+        prop('centeredX', 'boolean', false, 'Центрирование по горизонтали'),
+        prop('centeredY', 'boolean', false, 'Центрирование по вертикали'),
       ],
-    },
+    ),
 
-    // ========== Typography ==========
-    {
-      name: 'Typography.Display',
-      category: 'typography',
-      description: 'Крупный заголовок',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'weight',
-          type: "'regular' | 'medium' | 'bold'",
-          required: false,
-          description: 'Насыщенность шрифта',
-        },
+    component(
+      'Typography.Display',
+      'typography',
+      'Крупный display-текст.',
+      [prop('asChild', 'boolean', false, 'Рендер через Slot')],
+    ),
+    component(
+      'Typography.Title',
+      'typography',
+      'Заголовок.',
+      [
+        prop(
+          'variant',
+          '"large-strong" | "medium-strong" | "small" | "small-strong" | "custom"',
+          false,
+          'Вариант заголовка',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Typography.Title',
-      category: 'typography',
-      description: 'Заголовок',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'level',
-          type: '1 | 2 | 3',
-          required: false,
-          description: 'Уровень заголовка',
-        },
+    ),
+    component(
+      'Typography.Headline',
+      'typography',
+      'Подзаголовок.',
+      [
+        prop(
+          'variant',
+          '"large-strong" | "medium" | "medium-strong" | "small" | "small-strong" | "custom"',
+          false,
+          'Вариант headline',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Typography.Headline',
-      category: 'typography',
-      description: 'Подзаголовок',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'weight',
-          type: "'regular' | 'medium' | 'bold'",
-          required: false,
-          description: 'Насыщенность шрифта',
-        },
+    ),
+    component(
+      'Typography.Body',
+      'typography',
+      'Основной текст.',
+      [
+        prop(
+          'variant',
+          '"large" | "medium" | "small" | "small-strong" | "small-caps" | "custom"',
+          false,
+          'Вариант body-текста',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Typography.Body',
-      category: 'typography',
-      description: 'Основной текст',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'size',
-          type: "'s' | 'm' | 'l'",
-          required: false,
-          description: 'Размер текста',
-        },
+    ),
+    component(
+      'Typography.Label',
+      'typography',
+      'Текст метки.',
+      [
+        prop(
+          'variant',
+          '"large" | "large-strong" | "large-caps" | "medium" | "medium-strong" | "small-strong" | "small-caps" | "custom"',
+          false,
+          'Вариант label-текста',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Typography.Label',
-      category: 'typography',
-      description: 'Метка',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'size',
-          type: "'s' | 'm' | 'l'",
-          required: false,
-          description: 'Размер метки',
-        },
+    ),
+    component(
+      'Typography.Action',
+      'typography',
+      'Текст действия.',
+      [
+        prop(
+          'variant',
+          '"large" | "medium" | "small" | "label" | "custom"',
+          false,
+          'Вариант action-текста',
+        ),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Typography.Action',
-      category: 'typography',
-      description: 'Текст действия',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-      ],
-    },
+    ),
 
-    // ========== Helpers ==========
-    {
-      name: 'EllipsisText',
-      category: 'helpers',
-      description: 'Текст с многоточием при переполнении',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Содержимое текста',
-        },
-        {
-          name: 'maxLines',
-          type: 'number',
-          required: false,
-          description: 'Максимальное количество строк',
-        },
+    component(
+      'EllipsisText',
+      'helpers',
+      'Текст с ограничением числа строк.',
+      [
+        prop('maxLines', 'number', false, 'Максимальное число видимых строк'),
+        prop('asChild', 'boolean', false, 'Рендер через Slot'),
       ],
-    },
-    {
-      name: 'Ripple',
-      category: 'helpers',
-      description: 'Эффект волны при нажатии',
-      props: [
-        {
-          name: 'children',
-          type: 'ReactNode',
-          required: true,
-          description: 'Дочерний элемент с эффектом',
-        },
+      [
+        'При `maxLines > 1` используется line-clamp, поддержка которого зависит от браузера.',
       ],
-    },
+    ),
+    component(
+      'Ripple',
+      'helpers',
+      'Эффект ripple.',
+      [],
+      ['Специальных typed props поверх `<span>` у компонента нет.'],
+    ),
 
-    // ========== Compositions ==========
-    {
-      name: 'Profile',
-      category: 'compositions',
-      description: 'Композиция профиля',
-      props: [
-        {
-          name: 'avatar',
-          type: 'ReactNode',
-          required: true,
-          description: 'Компонент аватара',
-        },
-        {
-          name: 'title',
-          type: 'string',
-          required: true,
-          description: 'Имя или заголовок профиля',
-        },
-        {
-          name: 'subtitle',
-          type: 'string',
-          required: false,
-          description: 'Дополнительная информация',
-        },
-        {
-          name: 'action',
-          type: 'ReactNode',
-          required: false,
-          description: 'Кнопка действия',
-        },
+    component(
+      'Profile',
+      'compositions',
+      'Композиция профиля из раздела MAX UI Compositions.',
+      [],
+      [
+        'Страница `Profile` есть в публичной документации MAX UI, но в опубликованном npm-пакете `@maxhub/max-ui` версии 0.1.13 отдельный `.d.ts` для этой композиции не экспортируется.',
+        'Для точного состава пропсов и слотов ориентируйтесь на страницу компонента и Storybook.',
       ],
-    },
+    ),
   ],
 };

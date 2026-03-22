@@ -2,134 +2,145 @@ import type { BridgeApiDoc } from '../types.js';
 
 export const bridgeApi: BridgeApiDoc = {
   overview:
-    'MAX Bridge — JavaScript API для интеграции мини-приложений с платформой MAX. Подключение библиотеки через тег script.',
+    'MAX Bridge — JavaScript API для мини-приложений в MAX. Подключается через `https://st.max.ru/js/max-web-app.js` и предоставляет объект `window.WebApp` для работы с клиентом MAX.',
   scriptUrl: 'https://st.max.ru/js/max-web-app.js',
   mainProperties: [
     {
       name: 'initData',
       type: 'string',
-      description: 'Закодированные данные инициализации мини-приложения',
+      description:
+        'Строка с закодированными данными инициализации мини-приложения. Используется для серверной валидации',
       readonly: true,
     },
     {
       name: 'initDataUnsafe',
-      type: 'object',
-      description: 'Декодированные данные инициализации (WebAppData)',
+      type: 'WebAppData',
+      description:
+        'Декодированные данные инициализации: `query_id`, `auth_date`, `hash`, `start_param`, данные пользователя и чата',
       readonly: true,
     },
     {
       name: 'platform',
       type: 'string',
-      description: 'Платформа пользователя: ios, android, desktop, web',
+      description:
+        'Платформа клиента MAX, в котором открыто мини-приложение: обычно `ios`, `android`, `desktop` или `web`',
       readonly: true,
     },
     {
       name: 'version',
       type: 'string',
-      description: 'Версия API Bridge',
-      readonly: true,
-    },
-    {
-      name: 'isClosingConfirmationEnabled',
-      type: 'boolean',
-      description: 'Включено ли подтверждение закрытия',
+      description:
+        'Версия клиента MAX, в котором запущено мини-приложение',
       readonly: true,
     },
   ],
   coreMethods: [
     {
       name: 'ready',
-      description: 'Сигнализирует о готовности мини-приложения к отображению',
+      description:
+        'Сообщает клиенту MAX, что мини-приложение готово к показу пользователю',
       params: [],
       returnType: 'void',
+      notes: [
+        'Если контент не загружен и событие `WebAppReady` не отправлено примерно за 15 секунд, клиент может показать экран ошибки «нет сети».',
+      ],
     },
     {
       name: 'close',
-      description: 'Закрывает мини-приложение',
+      description: 'Закрывает окно мини-приложения',
       params: [],
       returnType: 'void',
     },
     {
       name: 'requestContact',
-      description: 'Запрашивает номер телефона пользователя',
+      description:
+        'Запрашивает у пользователя разрешение поделиться номером телефона',
       params: [],
-      returnType: 'void',
+      returnType: 'Promise<string>',
     },
     {
       name: 'onEvent',
-      description: 'Подписка на событие Bridge',
+      description: 'Подписывает обработчик на событие Bridge',
       params: [
         {
           name: 'eventName',
           type: 'string',
           required: true,
-          description: 'Имя события',
+          description: 'Имя события Bridge',
         },
         {
           name: 'callback',
           type: 'Function',
           required: true,
-          description: 'Функция-обработчик события',
+          description: 'Функция-обработчик',
         },
       ],
       returnType: 'void',
     },
     {
       name: 'offEvent',
-      description: 'Отписка от события Bridge',
+      description: 'Удаляет обработчик события Bridge',
       params: [
         {
           name: 'eventName',
           type: 'string',
           required: true,
-          description: 'Имя события',
+          description: 'Имя события Bridge',
         },
         {
           name: 'callback',
           type: 'Function',
           required: true,
-          description: 'Функция-обработчик события',
+          description: 'Функция-обработчик, которую нужно снять',
         },
       ],
       returnType: 'void',
     },
     {
       name: 'enableClosingConfirmation',
-      description: 'Включает подтверждение при закрытии',
+      description:
+        'Включает подтверждение закрытия мини-приложения, если есть несохранённые изменения',
       params: [],
       returnType: 'void',
     },
     {
       name: 'disableClosingConfirmation',
-      description: 'Отключает подтверждение при закрытии',
+      description: 'Отключает подтверждение закрытия мини-приложения',
       params: [],
       returnType: 'void',
     },
     {
       name: 'openLink',
-      description: 'Открывает внешнюю ссылку в браузере',
+      description: 'Открывает внешнюю ссылку во внешнем браузере',
       params: [
         {
           name: 'url',
           type: 'string',
           required: true,
-          description: 'URL для открытия',
+          description: 'Ссылка для открытия',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<{ status: "opened" }>',
+      notes: [
+        'Для вызова требуется активное действие пользователя внутри мини-приложения.',
+      ],
     },
     {
       name: 'openMaxLink',
-      description: 'Открывает внутреннюю ссылку MAX (deeplink)',
+      description:
+        'Открывает диплинк вида `https://max.ru/<some-url>` внутри MAX; ссылки другого вида будут открыты во внешнем браузере',
       params: [
         {
           name: 'url',
           type: 'string',
           required: true,
-          description: 'Внутренний URL MAX',
+          description: 'Диплинк MAX',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<{ status: "opened" }>',
+      notes: [
+        'Для вызова требуется активное действие пользователя внутри мини-приложения.',
+      ],
     },
     {
       name: 'shareContent',
@@ -148,115 +159,129 @@ export const bridgeApi: BridgeApiDoc = {
           description: 'Ссылка для шеринга',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<{ status: "shared" | "cancelled" }>',
+      notes: [
+        'Текст в событии `WebAppShare` ограничен 200 символами.',
+        'Для вызова требуется активное действие пользователя.',
+      ],
     },
     {
       name: 'shareMaxContent',
-      description: 'Шеринг контента внутри MAX',
+      description:
+        'Открывает шеринг в личные или групповые чаты MAX',
       params: [
         {
           name: 'params',
-          type: 'object',
+          type: '{ text?: string; link?: string; mid?: string; chatType?: "DIALOG" | "CHAT" }',
           required: true,
           description:
-            'Объект с параметрами: mid и chatType (для пересылки сообщения) или text и link (для шеринга текста)',
+            'Передавайте либо `text` и/или `link`, либо `mid` и `chatType` для шеринга ранее отправленного медиа или файла',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<{ status: "shared" | "cancelled" }>',
+      notes: [
+        'Если при шеринге медиа передать `text` или `link`, они будут проигнорированы.',
+        'Для вызова требуется активное действие пользователя.',
+      ],
     },
     {
       name: 'downloadFile',
-      description: 'Скачивает файл',
+      description: 'Запускает скачивание файла на устройство пользователя',
       params: [
         {
           name: 'url',
           type: 'string',
           required: true,
-          description: 'URL файла для скачивания',
+          description: 'HTTPS-ссылка на файл',
         },
         {
-          name: 'filename',
+          name: 'file_name',
           type: 'string',
           required: true,
           description: 'Имя файла для сохранения',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<{ status: "downloading" | "cancelled" }>',
+      notes: [
+        'Для вызова требуется активное действие пользователя.',
+      ],
     },
     {
       name: 'requestScreenMaxBrightness',
       description:
-        'Устанавливает максимальную яркость экрана (30 секунд)',
+        'Просит клиента установить максимальную яркость экрана примерно на 30 секунд',
       params: [],
       returnType: 'void',
     },
     {
       name: 'restoreScreenBrightness',
-      description: 'Восстанавливает яркость экрана',
+      description: 'Восстанавливает исходную яркость экрана',
       params: [],
       returnType: 'void',
     },
     {
       name: 'openCodeReader',
-      description: 'Открывает сканер QR-кодов',
+      description:
+        'Открывает камеру для считывания QR-кода и возвращает результат сканирования',
       params: [
         {
           name: 'fileSelect',
           type: 'boolean',
           required: false,
-          description: 'Разрешить выбор файла',
+          description:
+            'Если `true`, клиент дополнительно разрешит выбор изображения из галереи',
         },
       ],
-      returnType: 'void',
+      returnType: 'Promise<string>',
     },
   ],
   objects: [
     {
       name: 'BackButton',
-      description: 'Управление кнопкой «Назад» в мини-приложении',
+      description: 'Управление кнопкой Назад в шапке мини-приложения',
       properties: [
         {
           name: 'isVisible',
           type: 'boolean',
-          description: 'Видимость кнопки «Назад»',
+          description: 'Текущее состояние видимости кнопки Назад',
           readonly: false,
         },
       ],
       methods: [
         {
           name: 'show',
-          description: 'Показывает кнопку «Назад»',
+          description: 'Показывает кнопку Назад',
           params: [],
           returnType: 'void',
         },
         {
           name: 'hide',
-          description: 'Скрывает кнопку «Назад»',
+          description: 'Скрывает кнопку Назад',
           params: [],
           returnType: 'void',
         },
         {
           name: 'onClick',
-          description: 'Устанавливает обработчик нажатия кнопки «Назад»',
+          description: 'Подписывает обработчик на нажатие кнопки Назад',
           params: [
             {
               name: 'handler',
               type: 'Function',
               required: true,
-              description: 'Функция-обработчик нажатия',
+              description: 'Функция-обработчик',
             },
           ],
           returnType: 'void',
         },
         {
           name: 'offClick',
-          description: 'Удаляет обработчик нажатия кнопки «Назад»',
+          description: 'Снимает обработчик нажатия кнопки Назад',
           params: [
             {
               name: 'handler',
               type: 'Function',
               required: true,
-              description: 'Функция-обработчик для удаления',
+              description: 'Функция-обработчик',
             },
           ],
           returnType: 'void',
@@ -265,25 +290,29 @@ export const bridgeApi: BridgeApiDoc = {
     },
     {
       name: 'ScreenCapture',
-      description: 'Управление захватом экрана в мини-приложении',
+      description:
+        'Управляет возможностью делать скриншоты и записывать экран',
       properties: [
         {
           name: 'isScreenCaptureEnabled',
           type: 'boolean',
-          description: 'Разрешён ли захват экрана',
+          description:
+            'По таблице объекта: `true` означает, что запрет на скриншоты/запись включён, `false` — что они разрешены. Это отличается от таблицы события `WebAppSetupScreenCaptureBehavior` на странице Bridge.',
           readonly: true,
         },
       ],
       methods: [
         {
           name: 'enableScreenCapture',
-          description: 'Разрешает захват экрана (скриншоты и запись)',
+          description:
+            'Включает запрет на скриншоты и запись экрана',
           params: [],
           returnType: 'void',
         },
         {
           name: 'disableScreenCapture',
-          description: 'Запрещает захват экрана',
+          description:
+            'Отключает запрет на скриншоты и запись экрана',
           params: [],
           returnType: 'void',
         },
@@ -291,77 +320,106 @@ export const bridgeApi: BridgeApiDoc = {
     },
     {
       name: 'HapticFeedback',
-      description: 'Управление тактильной обратной связью (вибрацией)',
+      description:
+        'Тактильная обратная связь: воздействия, уведомления и изменение выбора',
       properties: [],
       methods: [
         {
           name: 'impactOccurred',
-          description: 'Вызывает вибрацию при нажатии',
+          description: 'Запускает виброотклик типа impact',
           params: [
             {
-              name: 'style',
+              name: 'impactStyle',
               type: 'string',
               required: true,
-              description: 'Стиль вибрации',
+              description: 'Стиль тактильного отклика',
               enumValues: ['soft', 'light', 'medium', 'heavy', 'rigid'],
             },
+            {
+              name: 'disableVibrationFallback',
+              type: 'boolean',
+              required: false,
+              description:
+                'Запрет использовать fallback-вибрацию на устройствах без переменной амплитуды. По умолчанию `false`',
+            },
           ],
-          returnType: 'void',
+          returnType: 'Promise<{ status: "impactOccured" }>',
         },
         {
           name: 'notificationOccurred',
-          description: 'Вызывает вибрацию при уведомлении',
+          description: 'Запускает виброотклик типа notification',
           params: [
             {
-              name: 'type',
+              name: 'notificationType',
               type: 'string',
               required: true,
               description: 'Тип уведомления',
               enumValues: ['error', 'success', 'warning'],
             },
+            {
+              name: 'disableVibrationFallback',
+              type: 'boolean',
+              required: false,
+              description:
+                'Запрет использовать fallback-вибрацию на устройствах без переменной амплитуды. По умолчанию `false`',
+            },
           ],
-          returnType: 'void',
+          returnType: 'Promise<{ status: "notificationOccured" }>',
         },
         {
           name: 'selectionChanged',
-          description: 'Вызывает вибрацию при изменении выбора',
-          params: [],
-          returnType: 'void',
+          description:
+            'Сообщает клиенту, что пользователь изменил выбор, чтобы воспроизвести соответствующий тактильный сигнал',
+          params: [
+            {
+              name: 'disableVibrationFallback',
+              type: 'boolean',
+              required: false,
+              description:
+                'Запрет использовать fallback-вибрацию на устройствах без переменной амплитуды. По умолчанию `false`',
+            },
+          ],
+          returnType: 'Promise<{ status: "selectionChanged" }>',
         },
       ],
     },
     {
       name: 'BiometricManager',
-      description: 'Управление биометрической аутентификацией',
+      description:
+        'Работа с биометрической аутентификацией и биометрическим токеном в защищённом хранилище устройства',
       properties: [
         {
           name: 'isInited',
           type: 'boolean',
-          description: 'Инициализирован ли менеджер биометрии',
+          description: 'Была ли ранее выполнена первичная инициализация',
           readonly: true,
         },
         {
           name: 'isBiometricAvailable',
           type: 'boolean',
-          description: 'Доступна ли биометрия на устройстве',
+          description:
+            'Доступна ли биометрия на устройстве пользователя',
           readonly: true,
         },
         {
           name: 'biometricType',
-          type: 'string',
-          description: 'Тип биометрии (fingerprint, face и т.д.)',
+          type: 'string[]',
+          description:
+            'Типы биометрии. Возможные значения: `fingerprint`, `faceid`, `unknown`. Для Android документация указывает `["unknown"]`',
           readonly: true,
         },
         {
           name: 'deviceId',
-          type: 'string',
-          description: 'Уникальный идентификатор устройства',
+          type: 'string | null',
+          description:
+            'Идентификатор устройства. Если доступ к биометрии не дан, может быть `null`',
           readonly: true,
         },
         {
           name: 'isAccessRequested',
           type: 'boolean',
-          description: 'Был ли запрошен доступ к биометрии',
+          description:
+            'Был ли ранее отправлен запрос на доступ к биометрии',
           readonly: true,
         },
         {
@@ -373,45 +431,51 @@ export const bridgeApi: BridgeApiDoc = {
         {
           name: 'isBiometricTokenSaved',
           type: 'boolean',
-          description: 'Сохранён ли биометрический токен',
+          description:
+            'Есть ли биометрический токен в безопасном хранилище устройства',
           readonly: true,
         },
       ],
       methods: [
         {
           name: 'init',
-          description: 'Инициализирует менеджер биометрии',
+          description:
+            'Первичная инициализация биометрии: проверка доступности и уже выданных разрешений',
           params: [],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'requestAccess',
-          description: 'Запрашивает доступ к биометрии у пользователя',
+          description:
+            'Запрашивает у пользователя доступ к использованию биометрии',
           params: [],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'authenticate',
-          description: 'Запускает биометрическую аутентификацию',
+          description:
+            'Запускает процесс биометрической аутентификации',
           params: [],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'updateBiometricToken',
-          description: 'Обновляет биометрический токен',
+          description:
+            'Сохраняет или обновляет биометрический токен в безопасном хранилище. Чтобы удалить токен, передайте пустую строку',
           params: [
             {
               name: 'token',
               type: 'string',
               required: true,
-              description: 'Новый биометрический токен',
+              description: 'Новый токен или пустая строка для удаления',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'openSettings',
-          description: 'Открывает настройки биометрии устройства',
+          description:
+            'Предлагает перейти в настройки MAX на экран приватности, чтобы выдать доступ к биометрии. Документация отмечает, что вызов закрывает мини-приложение',
           params: [],
           returnType: 'void',
         },
@@ -422,27 +486,28 @@ export const bridgeApi: BridgeApiDoc = {
     {
       name: 'DeviceStorage',
       description:
-        'Локальное хранилище устройства (недоступно в веб-версии)',
+        'Локальное хранилище данных, привязанное к пользователю MAX. Не поддерживается в веб-версии',
       properties: [],
       methods: [
         {
           name: 'setItem',
-          description: 'Сохраняет значение по ключу',
+          description:
+            'Сохраняет пару ключ-значение в локальном хранилище устройства',
           params: [
             {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для сохранения',
+              description: 'Ключ',
             },
             {
               name: 'value',
               type: 'string',
               required: true,
-              description: 'Значение для сохранения',
+              description: 'Значение',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'getItem',
@@ -452,10 +517,10 @@ export const bridgeApi: BridgeApiDoc = {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для получения значения',
+              description: 'Ключ',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<string | null>',
         },
         {
           name: 'removeItem',
@@ -465,75 +530,73 @@ export const bridgeApi: BridgeApiDoc = {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для удаления',
+              description: 'Ключ',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'clear',
-          description: 'Очищает всё хранилище',
+          description:
+            'Очищает все ключи, ранее сохранённые ботом в локальном хранилище устройства',
           params: [],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
       ],
     },
     {
       name: 'SecureStorage',
       description:
-        'Зашифрованное хранилище устройства (недоступно в веб-версии)',
+        'Защищённое хранилище данных. Не поддерживается в веб-версии',
       properties: [],
       methods: [
         {
           name: 'setItem',
-          description: 'Сохраняет зашифрованное значение по ключу',
+          description:
+            'Сохраняет пару ключ-значение в защищённом хранилище устройства',
           params: [
             {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для сохранения',
+              description: 'Ключ',
             },
             {
               name: 'value',
               type: 'string',
               required: true,
-              description: 'Значение для сохранения',
+              description: 'Значение',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
         {
           name: 'getItem',
-          description: 'Получает зашифрованное значение по ключу',
+          description:
+            'Получает значение по ключу из защищённого хранилища',
           params: [
             {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для получения значения',
+              description: 'Ключ',
             },
           ],
-          returnType: 'void',
+          returnType: 'Promise<string | null>',
         },
         {
           name: 'removeItem',
-          description: 'Удаляет зашифрованное значение по ключу',
+          description:
+            'Удаляет значение по ключу из защищённого хранилища',
           params: [
             {
               name: 'key',
               type: 'string',
               required: true,
-              description: 'Ключ для удаления',
+              description: 'Ключ',
             },
           ],
-          returnType: 'void',
-        },
-        {
-          name: 'clear',
-          description: 'Очищает всё зашифрованное хранилище',
-          params: [],
-          returnType: 'void',
+          returnType: 'Promise<void>',
         },
       ],
     },
@@ -541,97 +604,372 @@ export const bridgeApi: BridgeApiDoc = {
   events: [
     {
       name: 'WebAppReady',
-      description: 'Мини-приложение готово к отображению',
+      description:
+        'Сигнализирует клиенту MAX, что мини-приложение готово к работе',
     },
     {
       name: 'WebAppClose',
-      description: 'Мини-приложение закрывается',
+      description: 'Закрывает мини-приложение',
     },
     {
       name: 'WebAppSetupBackButton',
-      description: 'Изменение состояния кнопки «Назад»',
-    },
-    {
-      name: 'WebAppBackButtonPressed',
-      description: 'Нажата кнопка «Назад»',
+      description: 'Управляет отображением кнопки Назад',
+      dataFields: [
+        {
+          name: 'isVisible',
+          type: 'boolean',
+          required: true,
+          nullable: false,
+          description: '`true` показывает кнопку, `false` скрывает её',
+        },
+      ],
     },
     {
       name: 'WebAppRequestPhone',
-      description: 'Запрос номера телефона пользователя',
+      description:
+        'Показывает пользователю запрос на передачу номера телефона',
+      dataFields: [
+        {
+          name: 'phone',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'Номер телефона, который вернёт клиент при успехе',
+        },
+      ],
     },
     {
       name: 'WebAppSetupClosingBehavior',
-      description: 'Изменение поведения при закрытии',
+      description:
+        'Управляет запросом подтверждения при закрытии мини-приложения',
+      dataFields: [
+        {
+          name: 'needConfirmation',
+          type: 'boolean',
+          required: true,
+          nullable: false,
+          description:
+            '`true` включает всплывающее подтверждение, `false` отключает его',
+        },
+      ],
+    },
+    {
+      name: 'WebAppBackButtonPressed',
+      description:
+        'Уведомление о том, что пользователь нажал кнопку Назад',
     },
     {
       name: 'WebAppOpenLink',
-      description: 'Открытие внешней ссылки',
+      description: 'Открывает внешнюю ссылку во внешнем браузере',
+      dataFields: [
+        {
+          name: 'url',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Ссылка для открытия',
+        },
+      ],
     },
     {
       name: 'WebAppOpenMaxLink',
-      description: 'Открытие внутренней ссылки MAX',
+      description: 'Открывает диплинк MAX внутри клиента',
+      dataFields: [
+        {
+          name: 'url',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Диплинк вида `https://max.ru/<...>`',
+        },
+      ],
     },
     {
       name: 'WebAppShare',
-      description: 'Шеринг контента через нативный диалог',
+      description: 'Открывает системный шеринг из мини-приложения',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'text',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Текст для шеринга',
+        },
+        {
+          name: 'link',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'Ссылка для шеринга',
+        },
+      ],
     },
     {
-      name: 'WebAppMaxContent',
-      description: 'Шеринг контента внутри MAX',
+      name: 'WebAppMaxShare',
+      description: 'Открывает шеринг в личные и групповые чаты MAX',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'text',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'Текст для шеринга',
+        },
+        {
+          name: 'link',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'Ссылка для шеринга',
+        },
+        {
+          name: 'mid',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'ID сообщения бота, которое нужно расшарить',
+        },
+        {
+          name: 'chatType',
+          type: 'string',
+          required: false,
+          nullable: true,
+          description: 'Тип чата для шеринга сообщения: `DIALOG` или `CHAT`',
+        },
+      ],
     },
     {
       name: 'WebAppDownloadFile',
-      description: 'Скачивание файла',
-    },
-    {
-      name: 'WebAppChangeScreenBrightness',
-      description: 'Изменение яркости экрана',
+      description: 'Запускает скачивание файла на устройство',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'url',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'HTTPS-ссылка на скачиваемый файл',
+        },
+        {
+          name: 'file_name',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Имя файла для сохранения',
+        },
+      ],
     },
     {
       name: 'WebAppSetupScreenCaptureBehavior',
-      description: 'Изменение настроек захвата экрана',
+      description:
+        'Управляет возможностью делать скриншоты и записывать экран. На странице событий значение интерпретируется как прямое разрешение или запрет',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'isScreenCaptureEnabled',
+          type: 'boolean',
+          required: true,
+          nullable: false,
+          description:
+            'По таблице событий: `true` разрешает скриншоты и запись, `false` запрещает их',
+        },
+      ],
     },
     {
-      name: 'WebAppHapticFeedback',
-      description: 'Вызов тактильной обратной связи',
+      name: 'WebAppChangeScreenBrightness',
+      description: 'Управляет яркостью экрана',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'maxBrightness',
+          type: 'boolean',
+          required: true,
+          nullable: false,
+          description:
+            '`true` включает максимальную яркость на ограниченное время, `false` восстанавливает исходное значение',
+        },
+      ],
+    },
+    {
+      name: 'WebAppHapticFeedbackImpact',
+      description: 'Вызывает impact-виброотклик',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'impactStyle',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Стиль вибрации',
+          enumValues: ['soft', 'light', 'medium', 'heavy', 'rigid'],
+        },
+        {
+          name: 'disableVibrationFallback',
+          type: 'boolean',
+          required: false,
+          nullable: false,
+          description:
+            'Запрет на fallback-вибрацию на устройствах без переменной амплитуды',
+        },
+      ],
+    },
+    {
+      name: 'WebAppHapticFeedbackNotification',
+      description: 'Вызывает notification-виброотклик',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'notificationType',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Тип уведомления',
+          enumValues: ['error', 'success', 'warning'],
+        },
+        {
+          name: 'disableVibrationFallback',
+          type: 'boolean',
+          required: false,
+          nullable: false,
+          description:
+            'Запрет на fallback-вибрацию на устройствах без переменной амплитуды',
+        },
+      ],
+    },
+    {
+      name: 'WebAppHapticFeedbackSelectionChange',
+      description:
+        'Сообщает клиенту, что пользователь изменил выбор и требуется соответствующий тактильный сигнал',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'disableVibrationFallback',
+          type: 'boolean',
+          required: false,
+          nullable: false,
+          description:
+            'Запрет на fallback-вибрацию на устройствах без переменной амплитуды',
+        },
+      ],
     },
     {
       name: 'WebAppOpenCodeReader',
-      description: 'Открытие сканера QR-кодов',
+      description: 'Открывает камеру для считывания QR-кода',
+      dataFields: [
+        {
+          name: 'requestId',
+          type: 'string',
+          required: true,
+          nullable: false,
+          description: 'Идентификатор запроса',
+        },
+        {
+          name: 'fileSelect',
+          type: 'boolean',
+          required: false,
+          nullable: false,
+          description:
+            '`true` разрешает также выбор изображения из галереи',
+        },
+      ],
     },
   ],
   errorCodes: [
     {
       code: 'parse_link_error',
-      description: 'Ошибка парсинга ссылки',
+      description: 'Передана некорректная ссылка',
     },
     {
       code: 'user_gesture_required',
-      description: 'Требуется действие пользователя (жест)',
+      description:
+        'Для вызова метода требуется активное действие пользователя внутри мини-приложения',
     },
     {
       code: 'too_large_text',
-      description: 'Слишком длинный текст',
+      description: 'Текст для шеринга слишком длинный',
     },
     {
       code: 'too_large_link',
-      description: 'Слишком длинная ссылка',
+      description: 'Ссылка для шеринга слишком длинная',
     },
     {
       code: 'invalid_request',
-      description: 'Некорректный запрос',
+      description:
+        'Параметры не переданы, переданы некорректно или не соответствуют ожидаемой схеме',
+    },
+    {
+      code: 'download_failed',
+      description: 'Скачивание файла завершилось ошибкой',
     },
     {
       code: 'not_supported',
-      description: 'Функция не поддерживается на данной платформе',
+      description: 'Функция недоступна на устройстве или платформе',
     },
     {
       code: 'permission_denied',
-      description: 'Доступ запрещён',
+      description: 'Пользователь отказал в доступе к требуемому разрешению',
     },
     {
       code: 'cancelled',
-      description: 'Операция отменена пользователем',
+      description: 'Операция была отменена пользователем',
+    },
+    {
+      code: 'invalid_impact_style',
+      description: 'Передан неизвестный стиль impact-вибрации',
+    },
+    {
+      code: 'invalid_notification_type',
+      description: 'Передан неизвестный тип notification-вибрации',
     },
   ],
 };

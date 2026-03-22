@@ -6,10 +6,10 @@ export const botEndpoints: EndpointDoc[] = [
     path: '/me',
     group: 'bot',
     summary: 'Получить информацию о боте',
-    description: 'Возвращает информацию о текущем боте: имя, username, описание, аватар и список команд.',
+    description: 'Возвращает объект `User` с вариантом наследования `BotInfo`: идентификатор бота, отображаемое имя, никнейм, время последней активности, описание, аватар и список поддерживаемых команд.',
     parameters: [],
     response: {
-      description: 'Информация о боте (BotInfo)',
+      description: 'Информация о боте (`User -> BotInfo`)',
       fields: [
         { name: 'user_id', type: 'int64', required: true, nullable: false, description: 'Уникальный идентификатор пользователя' },
         { name: 'first_name', type: 'string', required: true, nullable: false, description: 'Имя' },
@@ -17,6 +17,7 @@ export const botEndpoints: EndpointDoc[] = [
         { name: 'username', type: 'string', required: false, nullable: true, description: 'Уникальное имя пользователя' },
         { name: 'is_bot', type: 'boolean', required: true, nullable: false, description: 'Является ли пользователь ботом' },
         { name: 'last_activity_time', type: 'int64', required: true, nullable: false, description: 'Время последней активности (Unix ms)' },
+        { name: 'name', type: 'string', required: false, nullable: true, description: 'Устаревшее поле, скоро будет удалено' },
         { name: 'description', type: 'string', required: false, nullable: true, description: 'Описание бота', constraints: 'max 16000 символов' },
         { name: 'avatar_url', type: 'string', required: false, nullable: true, description: 'URL аватара (маленький)' },
         { name: 'full_avatar_url', type: 'string', required: false, nullable: true, description: 'URL полного аватара' },

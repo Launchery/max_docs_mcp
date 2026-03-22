@@ -135,6 +135,7 @@ export function registerResources(server: McpServer): void {
     { name: 'guide-chatbot', category: 'chatbot', description: 'Создание, настройка и управление чат-ботами' },
     { name: 'guide-tutorials', category: 'tutorials', description: 'Пошаговые туториалы Hello Bot (JS, Go)' },
     { name: 'guide-sdk', category: 'sdk', description: 'Документация SDK: JavaScript/TypeScript и Go' },
+    { name: 'guide-mini-apps', category: 'mini-apps', description: 'Подключение мини-приложений, MAX Bridge и валидация данных' },
     { name: 'guide-channels', category: 'channels', description: 'Создание и управление каналами' },
     { name: 'guide-partners', category: 'partners', description: 'Интеграция с партнёрскими сервисами' },
     { name: 'guide-legal', category: 'legal', description: 'Правила, требования, соглашения, конфиденциальность' },

@@ -4,22 +4,22 @@ export const dataValidationGuide: GuideDoc = {
   id: 'data-validation',
   category: 'mini-apps',
   title: 'Валидация данных мини-приложения',
-  summary: 'Процесс верификации данных инициализации через HMAC-SHA256',
+  summary: 'Проверка подлинности `initData` мини-приложения через HMAC-SHA256 и токен бота',
   sections: [
     {
       heading: 'Процесс валидации',
       content:
-        'Валидация данных инициализации мини-приложения выполняется в 6 шагов с использованием алгоритма HMAC-SHA256.',
+        'MAX передаёт стартовые параметры при каждом запуске мини-приложения. Чтобы убедиться, что данные не были подменены, документация рекомендует проверять `initData` через HMAC-SHA256.',
       subsections: [
         {
           heading: 'Шаг 1: Получение данных',
           content:
-            'Получите закодированную строку данных инициализации через WebAppData.',
+            'Получите закодированную строку инициализации из `window.WebApp.initData`.',
         },
         {
           heading: 'Шаг 2: Извлечение параметров',
           content:
-            'Извлеките параметры через window.WebApp.InitData.',
+            'Разберите параметры строки, извлеките `hash` и остальные поля `auth_date`, `query_id`, `user`, `start_param` и другие доступные значения.',
         },
         {
           heading: 'Шаг 3: Подготовка данных',
@@ -29,7 +29,7 @@ export const dataValidationGuide: GuideDoc = {
         {
           heading: 'Шаг 4: Генерация секретного ключа',
           content:
-            'Сгенерируйте секретный ключ с помощью HMAC_SHA256, используя строку «WebAppData» в сочетании с токеном бота: HMAC_SHA256(\'WebAppData\' + Bot Token).',
+            'Сформируйте `secret_key` через HMAC-SHA256, используя строку `WebAppData` и токен бота, выданный на платформе MAX для партнёров.',
         },
         {
           heading: 'Шаг 5: Вычисление хеша',
@@ -39,7 +39,7 @@ export const dataValidationGuide: GuideDoc = {
         {
           heading: 'Шаг 6: Верификация',
           content:
-            'Сравните вычисленный хеш с полученным значением hash из исходных данных. Если значения совпадают — данные валидны.',
+            'Сравните вычисленный хеш с исходным `hash`. Совпадение означает, что стартовые данные подлинные.',
         },
       ],
     },
@@ -73,7 +73,7 @@ const calculatedHash = createHmac('sha256', secretKey)
 const isValid = calculatedHash === hash;`,
     },
   ],
-  relatedGuides: ['mini-apps-introduction', 'bridge-api-guide'],
+  relatedGuides: ['mini-apps-introduction', 'bridge-api'],
 };
 
 export const dataValidationGuides: GuideDoc[] = [dataValidationGuide];

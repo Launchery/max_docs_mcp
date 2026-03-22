@@ -5,32 +5,44 @@ export const partnerIntegrationGuide: GuideDoc = {
   category: 'partners',
   title: 'Интеграция с партнёрами',
   summary:
-    'Подключение платформ поддержки, конструкторов ботов и CRM-систем к MAX',
+    'Подключение чат-платформ, конструкторов ботов и CRM через токен бота после его модерации.',
   sections: [
     {
-      heading: 'Токен интеграции',
+      heading: 'Когда интеграция становится доступна',
       content:
-        'Для подключения партнёрского сервиса необходимо получить токен интеграции. Путь: Чат-боты → Интеграция → Получить токен.',
+        'Интеграции с партнёрами открываются только после создания и успешной модерации бота. Для подключения используется токен бота.',
     },
     {
-      heading: 'Платформы чат-поддержки',
+      heading: 'Где взять токен',
       content:
-        'Поддерживаемые платформы чат-поддержки: Jivo, Voximplant, Naumen, Edna Chat Center, Webim, Chat2Desk, Craft Talk, OMNIDESK, Callibri, Юздеск, Fasttrack, Talk-Me, Angry.Space, AutoFAQ, Sherlock Platform, UISCOM, Flomni, naimi.ai.',
+        'Токен находится на платформе MAX для партнёров в разделе Чат-боты → Интеграция → Получить токен. Этот же токен используется для работы с Bot API.',
     },
     {
-      heading: 'Конструкторы ботов (no-code)',
+      heading: 'Категории партнёров',
       content:
-        'Конструкторы ботов, не требующие программирования: Aimylogic (JAICP), Botmother, Jetbot, Aiso, Just AI (JAICP), Smartbot, Watbot, VK CXhub.',
+        'Документация делит партнёров на три категории: чат-платформы поддержки, конструкторы ботов и CRM-системы.',
+      subsections: [
+        {
+          heading: 'Чат-платформы поддержки',
+          content:
+            'Они собирают обращения из MAX и других каналов в едином окне оператора. На официальной странице перечислены Jivo, Voximplant Kit, Naumen, Edna Chat Center, Webim, Chat2Desk, CraftTalk, OMNIDESK, Callibri, Юздеск, Fasttrack, Talk-Me, Angry.Space, AutoFAQ, Sherlock Platform, UIS, Flomni и naimi.ai.',
+        },
+        {
+          heading: 'Конструкторы ботов',
+          content:
+            'Эта категория предназначена для no-code сценариев и быстрой сборки диалогов. На странице перечислены Aimylogic (JAICP), Botmother, Jetbot, Aiso, Just AI (JAICP), Smartbot, Watbot и VK CXhub.',
+        },
+        {
+          heading: 'CRM-системы',
+          content:
+            'CRM получают сообщения из MAX, помогают маршрутизировать обращения и связывать диалоги с карточками клиентов. На официальной странице указаны Битрикс24, RetailCRM, YClients, BPMSoft и Мегаплан.',
+        },
+      ],
     },
     {
-      heading: 'CRM-системы',
+      heading: 'Роль интеграций',
       content:
-        'Интеграция с CRM-системами: Битрикс24, RetailCRM, YClients, BPMSoft, Мегаплан.',
-    },
-    {
-      heading: 'Преимущества платформы',
-      content:
-        'Централизованная обработка сообщений, автоматическое распределение лидов, интеграция с ИИ, государственная сертификация безопасности.',
+        'MAX позиционирует эти интеграции как способ подключить готовые каналы поддержки, сценарии без разработки и автоматизацию работы с клиентской базой без самостоятельной реализации всех систем с нуля.',
     },
   ],
   relatedGuides: ['service-selection', 'bot-creation'],

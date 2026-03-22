@@ -1,7 +1,10 @@
 import { z } from 'zod';
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { allGuides, guidesByCategory } from '../data/guides/index.js';
+import { miniAppGuides } from '../data/mini-apps/index.js';
 import { formatGuidesTable } from '../utils/formatter.js';
+
+const allAvailableGuides = [...allGuides, ...miniAppGuides];
 
 export function registerListGuidesTool(server: McpServer): void {
   server.tool(
@@ -14,7 +17,10 @@ export function registerListGuidesTool(server: McpServer): void {
       ]).optional().describe('Фильтр по категории (опционально)'),
     },
     async ({ category }) => {
-      const guides = category ? (guidesByCategory[category] ?? allGuides) : allGuides;
+      const guides =
+        !category ? allAvailableGuides :
+        category === 'mini-apps' ? miniAppGuides :
+        (guidesByCategory[category] ?? allAvailableGuides);
       return {
         content: [{
           type: 'text' as const,
