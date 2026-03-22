@@ -1,7 +1,7 @@
 {
   "name": "max-docs-mcp-server",
-  "version": "1.0.0",
-  "description": "MCP server serving MAX messenger Bot API documentation",
+  "version": "2.0.0",
+  "description": "MCP server serving full MAX platform documentation: API, guides, Bridge API, UI components",
   "type": "module",
   "main": "dist/index.js",
   "bin": {
