@@ -27,3 +27,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TypeScript with strict compilation
 - Modular architecture: `src/data/`, `src/tools/`, `src/resources/`, `src/utils/`
 - Search utility with fuzzy matching across all data sources
+
+## [2.0.0] — 2026-04-06
+
+### Added
+- **get_code_example tool** — 8 production-ready code examples: send-message, send-buttons, handle-callback, webhook-setup, mini-app-init, upload-file, bridge-storage, error-handling
+- **Enhanced search_docs** — filter by type (`endpoint`, `model`, `guide`, `bridge`, `component`) and category (`messages`, `chats`, `mini-apps`, `ui`, etc.)
+- **MCP Prompts** — 4 reusable prompt templates:
+  - `create-bot` — step-by-step bot creation guide (parameterized by language)
+  - `send-message-patterns` — all message types and patterns
+  - `build-mini-app` — mini-app development with Bridge API (parameterized by app type)
+  - `debug-max-api` — error diagnosis and troubleshooting (parameterized by error description)
+
+### Changed
+- Server version bumped to 2.0.0
+- 8 tools total (was 7) + 4 prompts

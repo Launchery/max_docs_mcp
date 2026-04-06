@@ -26,7 +26,10 @@
 - [ ] Migration guides (v1 → v2 API changes)
 - [ ] Changelog feed as MCP resource
 
-## v2.0 — Enhanced Protocol
+## v2.0 — Enhanced Protocol ✅
+- [x] Code examples tool (8 production-ready examples)
+- [x] Enhanced search with type/category filters
+- [x] MCP Prompts (4 templates: create-bot, send-message-patterns, build-mini-app, debug-max-api)
 - [ ] Sampling support (let LLMs generate MAX bot code with context)
 - [ ] Progressive resource loading (lazy-load large docs)
 - [ ] Multi-language documentation (Russian source + English translation)

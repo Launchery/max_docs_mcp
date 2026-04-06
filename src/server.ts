@@ -7,6 +7,8 @@ import { registerListGuidesTool } from './tools/list-guides.js';
 import { registerGetGuideTool } from './tools/get-guide.js';
 import { registerGetBridgeApiTool } from './tools/get-bridge-api.js';
 import { registerGetComponentTool } from './tools/get-component.js';
+import { registerGetCodeExampleTool } from './tools/get-code-example.js';
+import { registerPrompts } from './prompts/index.js';
 
 export function createServer(): McpServer {
   const server = new McpServer({
@@ -30,6 +32,12 @@ export function createServer(): McpServer {
 
   // UI tools
   registerGetComponentTool(server);
+
+  // v2.0 tools
+  registerGetCodeExampleTool(server);
+
+  // Prompts
+  registerPrompts(server);
 
   return server;
 }

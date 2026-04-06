@@ -13,30 +13,53 @@ const allGuidesWithMiniApps = [...allGuides, ...miniAppGuides];
 export function registerSearchDocsTool(server: McpServer): void {
   server.tool(
     'search_docs',
-    'Поиск по всей документации MAX: эндпоинты, модели, руководства, Bridge API, UI-компоненты. Возвращает до 10 результатов.',
+    'Поиск по всей документации MAX: эндпоинты, модели, руководства, Bridge API, UI-компоненты. Поддерживает фильтрацию по типу и категории.',
     {
       query: z.string().describe('Поисковый запрос (ключевые слова)'),
+      type: z.enum(['endpoint', 'model', 'guide', 'bridge', 'component', 'all']).optional().describe('Фильтр по типу: endpoint, model, guide, bridge, component (по умолчанию: all)'),
+      category: z.string().optional().describe('Фильтр по категории: messages, chats, members, bot, subscriptions, uploads, callbacks, mini-apps, ui (опционально)'),
     },
-    async ({ query }) => {
+    async ({ query, type = 'all', category }) => {
       const results = searchDocs(
         query,
-        allEndpoints,
-        allModels,
-        allGuidesWithMiniApps,
-        bridgeApi,
-        uiLibrary.components,
+        type === 'all' || type === 'endpoint' ? allEndpoints : [],
+        type === 'all' || type === 'model' ? allModels : [],
+        type === 'all' || type === 'guide' ? allGuidesWithMiniApps : [],
+        type === 'all' || type === 'bridge' ? bridgeApi : undefined,
+        type === 'all' || type === 'component' ? uiLibrary.components : [],
       );
 
-      if (results.length === 0) {
+      // Apply category filter
+      const filtered = category
+        ? results.filter(r => {
+            const cat = category.toLowerCase();
+            switch (r.type) {
+              case 'endpoint':
+                return r.endpoint?.group?.toLowerCase().includes(cat);
+              case 'guide':
+                return r.guide?.category?.toLowerCase().includes(cat) ||
+                       r.guide?.id?.toLowerCase().includes(cat);
+              case 'bridge-method':
+              case 'bridge-event':
+                return cat === 'bridge' || cat === 'mini-apps' || cat === 'mini-app';
+              case 'component':
+                return r.component?.category?.toLowerCase().includes(cat) || cat === 'ui';
+              default:
+                return true;
+            }
+          })
+        : results;
+
+      if (filtered.length === 0) {
         return {
           content: [{
             type: 'text' as const,
-            text: `По запросу "${query}" ничего не найдено.\n\nПопробуйте другие ключевые слова или используйте list_endpoints / list_guides для просмотра всех документов.`,
+            text: `По запросу "${query}"${type !== 'all' ? ` (тип: ${type})` : ''}${category ? ` (категория: ${category})` : ''} ничего не найдено.\n\nПопробуйте другие ключевые слова или используйте list_endpoints / list_guides для просмотра всех документов.`,
           }],
         };
       }
 
-      const sections = results.map((r, i) => {
+      const sections = filtered.map((r, i) => {
         const header = `### Результат ${i + 1} (${r.type}, score: ${r.score})`;
         if (r.type === 'endpoint' && r.endpoint) {
           return `${header}\n\n${formatEndpoint(r.endpoint)}`;
@@ -64,7 +87,7 @@ export function registerSearchDocsTool(server: McpServer): void {
       const text = [
         `# Результаты поиска: "${query}"`,
         '',
-        `Найдено: ${results.length} результат(ов)`,
+        `Найдено: ${filtered.length} результат(ов)${type !== 'all' ? ` (фильтр: ${type})` : ''}${category ? ` (категория: ${category})` : ''}`,
         '',
         ...sections,
       ].join('\n\n');
