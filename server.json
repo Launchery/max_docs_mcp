@@ -1,0 +1,20 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-09-29/server.schema.json",
+  "name": "io.github.launchery/max-docs-mcp-server",
+  "description": "MCP server serving full MAX platform documentation — API references, guides, Bridge API, and UI component docs. Query any MAX topic directly from your AI coding assistant.",
+  "version": "2.0.0",
+  "packages": [
+    {
+      "registryType": "npm",
+      "identifier": "max-docs-mcp-server",
+      "version": "2.0.0",
+      "transport": {
+        "type": "stdio"
+      }
+    }
+  ],
+  "repository": {
+    "url": "https://github.com/Launchery/max_docs_mcp"
+  },
+  "tags": ["mcp", "documentation", "max-platform", "bot-api", "ai-devtools", "typescript"]
+}

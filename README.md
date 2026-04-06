@@ -158,6 +158,16 @@ command = "node"
 args = ["/absolute/path/to/max_docs_mcp/dist/index.js"]
 ```
 
+## Demo
+
+Для быстрой записи GIF / скринкаста / терминального демо см. [`DEMO-SCRIPT.md`](./DEMO-SCRIPT.md).
+
+Короткая версия demo path:
+1. `npm install && npm run build`
+2. показать MCP config с `max-docs`
+3. показать успешный `initialize`
+4. показать `tools/call` для `list_guides` или `search_docs`
+
 ## Проверка работоспособности
 
 Сборка:
@@ -413,4 +423,17 @@ npm run build
 rm -rf node_modules dist
 npm install
 npm run build
+```
+
+## MCP Registry
+
+Сервер подготовлен для submission в [MCP Registry](https://registry.modelcontextprotocol.io). Файл `server.json` содержит метаданные для публикации.
+
+```bash
+# После npm publish
+# Submit to MCP Registry (requires GitHub auth)
+curl -X POST https://registry.modelcontextprotocol.io/v0/publish \
+  -H "Authorization: Bearer $MCP_REGISTRY_TOKEN" \
+  -H "Content-Type: application/json" \
+  --data @server.json
 ```
